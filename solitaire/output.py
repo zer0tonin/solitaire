@@ -1,3 +1,5 @@
+import os
+
 CARD_MAP = {
  1: '🃑',
  2: '🃒',
@@ -58,3 +60,6 @@ CARD_MAP = {
 def print_deck_state(deck):
     state = ' '.join([CARD_MAP[i] for i in deck])
     print(state)
+
+def is_verbose():
+    return os.environ.get("SOLITAIRE_VERBOSE", "no").lower() == "yes"
