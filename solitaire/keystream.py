@@ -10,29 +10,34 @@ def generate_keystream(deck, length):
 
 
 def get_next_keystream_char(deck):
-    if is_verbose():
-        print("--- Starting deck ---")
-        print_deck_state(deck)
+    result = None
+    while result is None:
+        if is_verbose():
+            print("--- Starting deck ---")
+            print_deck_state(deck)
 
-    swap_a_joker(deck)
-    if is_verbose():
-        print("--- Step 1 ---")
-        print_deck_state(deck)
+        swap_a_joker(deck)
+        if is_verbose():
+            print("--- Step 1 ---")
+            print_deck_state(deck)
 
-    swap_b_joker(deck)
-    if is_verbose():
-        print("--- Step 2 ---")
-        print_deck_state(deck)
+        swap_b_joker(deck)
+        if is_verbose():
+            print("--- Step 2 ---")
+            print_deck_state(deck)
 
-    triple_cut(deck)
-    if is_verbose():
-        print("--- Step 3 ---")
-        print_deck_state(deck)
+        triple_cut(deck)
+        if is_verbose():
+            print("--- Step 3 ---")
+            print_deck_state(deck)
 
-    count_cut(deck)
-    if is_verbose():
-        print("--- Step 4 ---")
-        print_deck_state(deck)
+        count_cut(deck)
+        if is_verbose():
+            print("--- Step 4 ---")
+            print_deck_state(deck)
+
+        result = get_output_card(deck)
+    return result
 
 
 def is_joker(card):
@@ -53,10 +58,16 @@ def swap_a_joker(deck):
     Swaps joker A with the card below it
     """
     for i, card in enumerate(deck):
+        if is_joker_a(card) and i == len(deck) - 1:
+            top = deck.popleft()
+            deck.pop()
+            deck.appendleft(card)
+            deck.appendleft(top)
+            return
         if is_joker_a(card):
             j = (i + 1) % 54
             swap = deck[j]
-            deck[j] = 53
+            deck[j] = card
             deck[i] = swap
             return
 
@@ -67,12 +78,28 @@ def swap_b_joker(deck):
     Swaps joker B with the two cards below it
     """
     for i, card in enumerate(deck):
+        if is_joker_b(card) and i == len(deck) - 1:
+            top = deck.popleft()
+            top2 = deck.popleft()
+            deck.pop()
+            deck.appendleft(card)
+            deck.appendleft(top2)
+            deck.appendleft(top)
+            return
+        if is_joker_b(card) and i == len(deck) - 2:
+            top = deck.popleft()
+            bottom = deck.pop()
+            deck.pop()
+            deck.append(bottom)
+            deck.appendleft(card)
+            deck.appendleft(top)
+            return
         if is_joker_b(card):
             j = (i + 1) % 54
             k = (i + 2) % 54
             swap = deck[j]
             swap2 = deck[k]
-            deck[k] = 54
+            deck[k] = card
             deck[j] = swap2
             deck[i] = swap
             return
@@ -102,13 +129,14 @@ def triple_cut(deck):
         deck.appendleft(after.pop())
 
 
-def count_cut(deck):
+def count_cut(deck, count=None):
     """
     Fourth step of the keystream generation
     Cuts after the number of the first card
     """
     bottom_card = deck.pop()
-    count = 53 if bottom_card == 54 else bottom_card # either joker counts 53
+    if count is None:
+        count = 53 if is_joker(bottom_card) else bottom_card # either joker counts 53
 
     cut = deque()
     for _ in range(count):
@@ -118,3 +146,14 @@ def count_cut(deck):
         deck.append(cut.popleft())
 
     deck.append(bottom_card)
+
+
+def get_output_card(deck):
+    """
+    Fifth and last step, get the output using the top card
+    """
+    top_card = deck[0]
+    output_card = deck[top_card - 1]
+    if is_joker(output_card):
+        return None
+    return output_card % 26
