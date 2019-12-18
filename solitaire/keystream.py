@@ -10,8 +10,7 @@ def generate_keystream(deck, length):
 
 
 def get_next_keystream_char(deck):
-    result = None
-    while result is None:
+    while True:
         if is_verbose():
             print("--- Starting deck ---")
             print_deck_state(deck)
@@ -37,19 +36,20 @@ def get_next_keystream_char(deck):
             print_deck_state(deck)
 
         result = get_output_card(deck)
-    return result
+        if result:
+            return result
 
 
 def is_joker(card):
-    return card in (53, 54)
+    return card in ('A', 'B')
 
 
 def is_joker_a(card):
-    return card == 53
+    return card == 'A'
 
 
 def is_joker_b(card):
-    return card == 54
+    return card == 'B'
 
 
 def swap_a_joker(deck):
@@ -153,7 +153,10 @@ def get_output_card(deck):
     Fifth and last step, get the output using the top card
     """
     top_card = deck[0]
-    output_card = deck[top_card - 1]
+    if is_joker(top_card):
+        output_card = deck[53]
+    else:
+        output_card = deck[top_card]
     if is_joker(output_card):
         return None
-    return output_card % 26
+    return output_card

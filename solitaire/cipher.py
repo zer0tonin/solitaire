@@ -6,30 +6,37 @@ def derivate_deck(key):
     """
     Creates a deck from a string key
     """
-    deck = deque([i for i in range(1, 55)])
-    swap_a_joker(deck)
-    swap_b_joker(deck)
-    triple_cut(deck)
-    count_cut(deck)
-    [count_cut(deck, count=(ord(char) - 64)) for char in key]
+
+    deck = deque([i for i in range(1, 53)])
+    deck.append('A')
+    deck.append('B')
+
+    for char in key:
+        swap_a_joker(deck)
+        swap_b_joker(deck)
+        triple_cut(deck)
+        count_cut(deck)
+        count_cut(deck, count=(ord(char) - 64))
     return deck
 
+
+def add_modulo(keystream_int, text_char):
+    keystream_int = keystream_int % 26
+    text_int = ord(text_char)
+    return chr(keystream_int + text_int)
 
 def encrypt(plaintext, key):
     """
     Encrypts a message with a key
     """
+    plaintext = plaintext.upper()
+    while len(plaintext) % 5 != 0:
+        plaintext = plaintext + "X"
+
     deck = derivate_deck(key)
     keystream = generate_keystream(deck, len(plaintext))
-    ciphertext = deque([chr(64 + ((keystream[i] + ord(char) - 64) % 26)) for i, char in enumerate(plaintext)])
+    print(keystream)
+    ciphertext = [add_modulo(keystream[i], char) for i, char in enumerate(plaintext)]
 
-    blocks = []
-    while ciphertext:
-        block = []
-        for _ in range(5):
-            if ciphertext:
-                block.append(ciphertext.popleft())
-            else:
-                block.append("X")
-        blocks.append(''.join(block))
+    blocks = [''.join(ciphertext[i:i+5]) for i in range(0, len(ciphertext), 5)]
     return ' '.join(blocks)
