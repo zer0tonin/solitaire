@@ -2,9 +2,9 @@ from collections import deque
 
 
 def add_modulo(keystream_int, text_char):
-    keystream_int = keystream_int % 26
-    text_int = ord(text_char)
-    return chr(keystream_int + text_int)
+    text_int = ord(text_char) - 65
+    add = (keystream_int + text_int) % 26
+    return chr(add + 65)
 
 
 def encrypt(plaintext, deck):
@@ -28,9 +28,9 @@ def encrypt(plaintext, deck):
 
 
 def substract_modulo(keystream_int, text_char):
-    keystream_int = keystream_int % 26
-    text_int = ord(text_char)
-    return chr(text_int - keystream_int)
+    text_int = ord(text_char) - 65
+    sub = (text_int - keystream_int) % 26
+    return chr(sub + 65)
 
 
 def decrypt(ciphertext, deck):

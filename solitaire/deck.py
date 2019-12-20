@@ -3,7 +3,7 @@ from solitaire.output import CARD_MAP
 from solitaire.card import Card
 
 
-def derivate_deck(key, verbose=False, pretty=True):
+def derivate_deck(key, verbose=False, pretty=False):
     """
     Creates a deck from a string key
     """
