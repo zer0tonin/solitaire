@@ -3,21 +3,27 @@ from solitaire.output import CARD_MAP
 from solitaire.card import Card
 
 
-def derivate_deck(key):
+def derivate_deck(key, verbose=False, pretty=True):
     """
     Creates a deck from a string key
     """
 
-    deck = Deck([i for i in range(1, 53)])
+    deck = Deck([i for i in range(1, 53)], verbose=verbose, pretty=pretty)
     deck.cards.append(Card("A"))
     deck.cards.append(Card("B"))
+    deck.print_state("\n--- Key Derivation ---")
 
     for char in key.upper():
         deck.swap_a_joker()
+        deck.print_state("\n--- Step 1 ---")
         deck.swap_b_joker()
+        deck.print_state("--- Step 2 ---")
         deck.triple_cut()
+        deck.print_state("--- Step 3 ---")
         deck.count_cut()
+        deck.print_state("--- Step 4 ---")
         deck.count_cut(count=(ord(char) - 64))
+        deck.print_state("--- Step 5 ---")
     return deck
 
 
@@ -34,11 +40,11 @@ class Deck:
         if self.pretty:
             state = " ".join([CARD_MAP[c.value] for c in self.cards])
         elif self.verbose:
-            state = " ".join([c.value for c in self.cards])
+            state = " ".join([str(c.value) for c in self.cards])
 
         if self.verbose or self.pretty:
-            print(state)
             print(label)
+            print(state)
 
     def generate_keystream(self, length):
         """
@@ -48,7 +54,7 @@ class Deck:
 
     def get_next_keystream_char(self):
         while True:
-            self.print_state("--- Start ---")
+            self.print_state("\n--- Keystream generation ---")
 
             self.swap_a_joker()
             self.print_state("--- Step 1 ---")
@@ -63,6 +69,9 @@ class Deck:
             self.print_state("--- Step 4 ---")
 
             result = self.get_output()
+            if self.verbose or self.pretty:
+                print("--- Output ---")
+                print(result)
             if result:
                 return result
 

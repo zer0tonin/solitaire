@@ -1,6 +1,7 @@
 import pytest
 
 from solitaire.cipher import decrypt, encrypt
+from solitaire.deck import derivate_deck
 
 # source: https://www.schneier.com/code/sol-test.txt
 @pytest.mark.parametrize(
@@ -64,7 +65,7 @@ from solitaire.cipher import decrypt, encrypt
     ],
 )
 def test_encrypt(plaintext, key, ciphertext):
-    assert encrypt(plaintext, key) == ciphertext
+    assert encrypt(plaintext, derivate_deck(key)) == ciphertext
 
 
 @pytest.mark.parametrize(
@@ -128,4 +129,4 @@ def test_encrypt(plaintext, key, ciphertext):
     ],
 )
 def test_decrypt(ciphertext, key, plaintext):
-    assert decrypt(ciphertext, key) == plaintext
+    assert decrypt(ciphertext, derivate_deck(key)) == plaintext

@@ -1,7 +1,5 @@
 from collections import deque
 
-from solitaire.deck import derivate_deck
-
 
 def add_modulo(keystream_int, text_char):
     keystream_int = keystream_int % 26
@@ -9,7 +7,7 @@ def add_modulo(keystream_int, text_char):
     return chr(keystream_int + text_int)
 
 
-def encrypt(plaintext, key):
+def encrypt(plaintext, deck):
     """
     Encrypts a message with a key
     """
@@ -18,7 +16,6 @@ def encrypt(plaintext, key):
     while len(plaintext) % 5 != 0:
         plaintext.append("X")
 
-    deck = derivate_deck(key)
     keystream = deck.generate_keystream(len(plaintext))
     ciphertext = [
         add_modulo(keystream[i], char) for i, char in enumerate(plaintext)
@@ -36,14 +33,13 @@ def substract_modulo(keystream_int, text_char):
     return chr(text_int - keystream_int)
 
 
-def decrypt(ciphertext, key):
+def decrypt(ciphertext, deck):
     """
     Decrypts a message with a key
     """
     ciphertext = ciphertext.upper()
     ciphertext = [char for char in ciphertext if char != " "]
 
-    deck = derivate_deck(key)
     keystream = deck.generate_keystream(len(ciphertext))
     plaintext = [
         substract_modulo(keystream[i], char)
