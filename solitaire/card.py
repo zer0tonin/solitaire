@@ -6,10 +6,10 @@ class Card:
         return isinstance(self, Card) and self.value == o.value
 
     def is_joker(self):
-        return self.value in ('A', 'B')
+        return self.value in ("A", "B")
 
     def is_joker_a(self):
-        return self.value == 'A'
+        return self.value == "A"
 
     def is_joker_b(self):
-        return self.value == 'B'
+        return self.value == "B"

@@ -9,8 +9,8 @@ def derivate_deck(key):
     """
 
     deck = Deck([i for i in range(1, 53)])
-    deck.cards.append(Card('A'))
-    deck.cards.append(Card('B'))
+    deck.cards.append(Card("A"))
+    deck.cards.append(Card("B"))
 
     for char in key:
         deck.swap_a_joker()
@@ -32,9 +32,9 @@ class Deck:
 
     def print_state(self, label):
         if self.pretty:
-            state = ' '.join([CARD_MAP[c.value] for c in self.cards])
+            state = " ".join([CARD_MAP[c.value] for c in self.cards])
         elif self.verbose:
-            state = ' '.join([c.value for c in self.cards])
+            state = " ".join([c.value for c in self.cards])
 
         if self.verbose or self.pretty:
             print(state)
@@ -73,10 +73,8 @@ class Deck:
         """
         for i, card in enumerate(self.cards):
             if card.is_joker_a() and i == 53:
-                top = self.cards.popleft()
-                self.cards.pop()
-                self.cards.appendleft(card)
-                self.cards.appendleft(top)
+                cut = [self.cards.pop(), self.cards.popleft()]
+                self.cards.extendleft(cut)
                 return
             if card.is_joker_a():
                 j = (i + 1) % 54
@@ -93,28 +91,22 @@ class Deck:
         for i, card in enumerate(self.cards):
             if card.is_joker_b() and i == 53:
                 top = self.cards.popleft()
-                top2 = self.cards.popleft()
-                self.cards.pop()
-                self.cards.appendleft(card)
-                self.cards.appendleft(top2)
-                self.cards.appendleft(top)
+                cut = [self.cards.pop(), self.cards.popleft(), top]
+                self.cards.extendleft(cut)
                 return
             if card.is_joker_b() and i == 52:
-                top = self.cards.popleft()
                 bottom = self.cards.pop()
-                self.cards.pop()
+                cut = [self.cards.pop(), self.cards.popleft()]
                 self.cards.append(bottom)
-                self.cards.appendleft(card)
-                self.cards.appendleft(top)
+                self.cards.extendleft(cut)
                 return
             if card.is_joker_b():
                 j = (i + 1) % 54
                 k = (i + 2) % 54
-                swap = self.cards[j]
-                swap2 = self.cards[k]
+                swap = (self.cards[j], self.cards[k])
                 self.cards[k] = card
-                self.cards[j] = swap2
-                self.cards[i] = swap
+                self.cards[j] = swap[1]
+                self.cards[i] = swap[0]
                 return
 
     def triple_cut(self):
@@ -147,7 +139,9 @@ class Deck:
         """
         bottom_card = self.cards.pop()
         if count is None:
-            count = 53 if bottom_card.is_joker() else bottom_card.value # either joker counts 53
+            count = (
+                53 if bottom_card.is_joker() else bottom_card.value
+            )  # either joker counts 53
 
         cut = deque()
         for _ in range(count):
