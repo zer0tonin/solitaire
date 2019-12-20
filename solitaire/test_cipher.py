@@ -1,7 +1,6 @@
 import pytest
 
-from solitaire.cipher import decrypt, encrypt, derivate_deck
-from solitaire.keystream import generate_keystream
+from solitaire.cipher import decrypt, encrypt
 
 # source: https://www.schneier.com/code/sol-test.txt
 @pytest.mark.parametrize(

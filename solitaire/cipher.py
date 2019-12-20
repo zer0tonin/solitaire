@@ -1,23 +1,6 @@
 from collections import deque
 
-from solitaire.keystream import swap_a_joker, swap_b_joker, triple_cut, count_cut, generate_keystream
-
-def derivate_deck(key):
-    """
-    Creates a deck from a string key
-    """
-
-    deck = deque([i for i in range(1, 53)])
-    deck.append('A')
-    deck.append('B')
-
-    for char in key:
-        swap_a_joker(deck)
-        swap_b_joker(deck)
-        triple_cut(deck)
-        count_cut(deck)
-        count_cut(deck, count=(ord(char) - 64))
-    return deck
+from solitaire.deck import derivate_deck
 
 
 def add_modulo(keystream_int, text_char):
@@ -36,7 +19,7 @@ def encrypt(plaintext, key):
         plaintext.append("X")
 
     deck = derivate_deck(key)
-    keystream = generate_keystream(deck, len(plaintext))
+    keystream = deck.generate_keystream(len(plaintext))
     ciphertext = [add_modulo(keystream[i], char) for i, char in enumerate(plaintext)]
 
     blocks = [''.join(ciphertext[i:i+5]) for i in range(0, len(ciphertext), 5)]
@@ -57,7 +40,7 @@ def decrypt(ciphertext, key):
     ciphertext = [char for char in ciphertext if char != ' ']
 
     deck = derivate_deck(key)
-    keystream = generate_keystream(deck, len(ciphertext))
+    keystream = deck.generate_keystream(len(ciphertext))
     plaintext = [substract_modulo(keystream[i], char) for i, char in enumerate(ciphertext)]
 
     blocks = [''.join(plaintext[i:i+5]) for i in range(0, len(plaintext), 5)]
