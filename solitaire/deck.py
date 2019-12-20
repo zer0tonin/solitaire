@@ -12,7 +12,7 @@ def derivate_deck(key):
     deck.cards.append(Card("A"))
     deck.cards.append(Card("B"))
 
-    for char in key:
+    for char in key.upper():
         deck.swap_a_joker()
         deck.swap_b_joker()
         deck.triple_cut()
