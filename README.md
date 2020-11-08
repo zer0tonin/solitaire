@@ -1,6 +1,10 @@
 # Solitaire
 
-An implementation of Bruce Schneier's Solitaire: https://www.schneier.com/academic/solitaire/
+An implementation of Bruce Schneier's Solitaire.
+
+Original specifications: https://www.schneier.com/academic/solitaire/
+
+Description and review: https://alicegg.tech/2020/01/03/solitaire.html
 
 DO NOT EVER USE THIS IN A PRODUCTION SYSTEM
 
